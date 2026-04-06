@@ -24,8 +24,59 @@ h1 {
   background-color: #e6f0ff;
   cursor: pointer;
 }
+.container {
+  display: flex;
+}
+
+/* Lista de favorritos izquierda */
+.sidebar {
+  width: 250px;
+  min-height: 100vh;
+  background-color: #9898bc;
+  color: white;
+  padding: 20px;
+  margin: 15px;
+}
+
+.sidebar h2 {
+  margin-top: 0;  
+  margin-bottom: 15px;
+}
+.sidebar .favorites-list li {
+  display: flex;
+  align-items: center;
+  gap: 15px; 
+}
+
+.favorites-list {
+  list-style: none;
+  padding: 0;
+}
+
+.favorite-img {
+  width: 70px;     
+  height: 70px;       
+  object-fit: cover; 
+  flex-shrink: 0; 
+}
+
+.favorites-list li {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 10px;
+  margin-bottom: 8px;
+  background-color: #2e2e4d;
+}
 
 /* Lista de resultados */
+
+.layout {
+  display: flex;
+  align-items: flex-start; 
+  gap: 20px;
+}
+
 .results {
   list-style: none;
   display: grid;
@@ -35,6 +86,11 @@ h1 {
 }
 
 /* Tarjeta de serie */
+
+.series-layout {
+  margin-top: 0;
+}
+
 .series-card {
   display: flex;
   flex-direction: column;
