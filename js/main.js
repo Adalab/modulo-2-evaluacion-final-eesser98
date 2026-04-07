@@ -3,89 +3,138 @@
 const resultsUl = document.querySelector(".js_results");
 const favouriteUl = document.querySelector(".js_favouriteUl");
 
+const searchBtn = document.querySelector(".js_searchBtn");
+const filterInput = document.querySelector (".js_filterInput");
+
 let seriesData = [];
+let favouritesData = [];
 
-let favoritesData =[];
+function handleClickSearch (ev){
+  ev.preventDefault();
+  fetch (`https://api.tvmaze.com/search/shows?q=${filterInput.value}`)
+  .then(res => res.json())
+  .then (data => {
+    console.log(data);
+    const filteredSeries = data.show;
 
-const favoritesFromLS = JSON.parse(localStorage.getItem("favs"));
+    renderAllSeries (filteredSeries);
 
-if (favoritesFromLS){
-  favoritesData = favoritesFromLS;
-
-  renderAllFavourites();
+  })
 }
 
-function renderAllFavourites(){
+ searchBtn.addEventListener("click", handleClickSearch);
+
+/*
+function handleClickSearch (ev){
+  ev.preventDefault();
+  console.log("has hecho click");
+
+  // recueperar el value del input 
+  const typedValue = filterInput.value
+  console.log(typedValue);
+
+  //filtrar todos los resultados 
+  const filteredSeries = seriesData.filter (eachObj => 
+    eachObj.name.toLowerCase().includes(typedValue.toLowerCase()));
+
+  //pintar los resultados 
+  renderAllSeries(filteredSeries);
+  }
+ */
+
+function addEventsToSeries() {
+  const allSeriesLi = document.querySelectorAll(".js_series"); // Seleccionamos todos los LI
+  for (const li of allSeriesLi) {
+    li.addEventListener("click", handleClickLi);
+  }
+}
+
+function handleClickLi(ev) {
+  const clickedId = parseInt(ev.currentTarget.dataset.id);
+
+  // Buscamos la serie en el array original
+  const clickedSeries = seriesData.find(
+    (eachObject) => eachObject.id === clickedId
+  );
+
+  // Buscamos si ya está en favoritos
+  const favsIndex = favouritesData.findIndex(
+    (eachObj) => eachObj.id === clickedId
+  );
+
+  if (favsIndex !== -1) {
+    // Si ya está, la quitamos
+    favouritesData.splice(favsIndex, 1);
+  } else {
+    // Si no está, la añadimos
+    favouritesData.push(clickedSeries);
+  }
+
+  // Guardamos en LS y RE-PINTAMOS TODO
+  localStorage.setItem('favs', JSON.stringify(favouritesData));
+  
+  renderAllSeries(seriesData); // Esto hace que cambie el color en la lista principal
+  renderAllFavourites();       // Esto actualiza la lista de la derecha
+}
+
+function renderOneSeries(oneSeriesObj) {
+  let image = oneSeriesObj.image 
+    ? oneSeriesObj.image.medium 
+    : "https://placehold.co/210x295/f5f5f5/666666/?text=TV";
+
+  // Comprobar si es favorita para añadir la clase CSS
+  const isFav = favouritesData.find(fav => fav.id === oneSeriesObj.id);
+  const favClass = isFav ? "favourite" : "";
+
+  return `
+    <li class="js_series series-card ${favClass}" data-id="${oneSeriesObj.id}">
+        <img src="${image}" alt="${oneSeriesObj.name}">
+        <p class="series-title">${oneSeriesObj.name}</p>
+    </li>`;
+}
+
+function renderAllSeries(data) {
   let html = "";
-  for (const oneSeriesObj of favoritesData) {
+  for (const oneSeriesObj of data) {
+    html += renderOneSeries(oneSeriesObj);
+  }
+  resultsUl.innerHTML = html;
+  
+  addEventsToSeries();
+}
+
+function renderAllFavourites() {
+  let html = "";
+  for (const oneSeriesObj of favouritesData) {
     html += renderOneSeries(oneSeriesObj);
   }
   favouriteUl.innerHTML = html;
 }
 
-function handleClickLi(ev) {
-  console.log("click");
+function retrieveData() {
+  const seriesFromLS = JSON.parse(localStorage.getItem("cache"));
 
-  // esto es el LI donde se hace click. Cambia el fondo del LI
-  ev.currentTarget.classList.toggle("favourite");
-
-  console.log(ev.currentTarget.dataset.id);
-
-  // recupero el id del LI clickado
-  const clickedId = parseInt(ev.currentTarget.dataset.id); //parseInt para que devuelva un número
-
-  // busco obj con los datos del array, usando el id del LI donde se ha hecho clik
-  const clickedSeries = seriesData.find(
-    (eachObject) => eachObject.show.id === clickedId,
-  );
-
-  // si encuentra datos, 
-  if (clickedSeries !== undefined) {
-    favoritesData.push(clickedSeries);
-    localStorage.setItem('favs', JSON.stringify(favoritesData));
-
-    console.log(clickedSeries);
-    //generamos un li
-    const liHtml = renderOneSeries(clickedSeries);
-    //lo ponemos en la página (lista de favos)
-    favouriteUl.innerHTML += liHtml;
-  }
-}
-
-function renderOneSeries(oneSeriesObj) {
-  let image = "";
-
-  // condicional por si la serie no tiene img, si no da fallo
-  if (oneSeriesObj.show.image) {
-    image = oneSeriesObj.show.image.medium;
+  if (seriesFromLS) {
+    seriesData = seriesFromLS; 
+    renderAllSeries(seriesData);
   } else {
-    image = "https://placehold.co/210x295/f5f5f5/666666/?text=TV";
+    fetch("https://api.tvmaze.com/shows")
+      .then((res) => res.json())
+      .then((data) => {
+        seriesData = data; 
+        localStorage.setItem("cache", JSON.stringify(seriesData));
+        renderAllSeries(seriesData);
+      });
   }
-
-  const html = `
-            <li class="js_series series-card" data-id="${oneSeriesObj.show.id}">
-                <img src="${image}" alt="Serie-nova">
-                <p class="series-title">${oneSeriesObj.show.name}</p>
-            </li>`;
-  return html;
 }
 
-function renderAllSeries(seriesData) {
-  let html = ""; // esto es mejor cuando el array contiene imagenes
-  for (const oneSeriesObj of seriesData) {
-    html += renderOneSeries(oneSeriesObj);
+function retrieveFavs() {
+  const favouritesFromLS = JSON.parse(localStorage.getItem("favs"));
+  if (favouritesFromLS) {
+    favouritesData = favouritesFromLS;
+    renderAllFavourites();
   }
-  resultsUl.innerHTML = html;
 }
 
-fetch("https://api.tvmaze.com/search/shows?q=girls") // esto devuelve una promesa
-  .then((res) => res.json())
-  .then((data) => {
-    console.log(data);
-    seriesData = data;
-    renderAllSeries(seriesData); // llamada a la funcion que pinta las series
-    const allSeriesLi = document.querySelectorAll(".js_series"); // el evento no se puede poner directamente al array y por eso se hace un bucle
-    for (const li of allSeriesLi) {
-      li.addEventListener("click", handleClickLi);
-    }
-  });
+retrieveFavs();
+retrieveData();

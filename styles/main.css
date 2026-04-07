@@ -69,6 +69,10 @@ h1 {
   background-color: #2e2e4d;
 }
 
+.favourite {
+  background-color: #ffcc00; /* O el color que quieras */
+}
+
 /* Lista de resultados */
 
 .layout {
