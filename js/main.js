@@ -5,23 +5,49 @@ const favouriteUl = document.querySelector(".js_favouriteUl");
 
 let seriesData = [];
 
+let favoritesData =[];
+
+const favoritesFromLS = JSON.parse(localStorage.getItem("favs"));
+
+if (favoritesFromLS){
+  favoritesData = favoritesFromLS;
+
+  renderAllFavourites();
+}
+
+function renderAllFavourites(){
+  let html = "";
+  for (const oneSeriesObj of favoritesData) {
+    html += renderOneSeries(oneSeriesObj);
+  }
+  favouriteUl.innerHTML = html;
+}
+
 function handleClickLi(ev) {
   console.log("click");
 
+  // esto es el LI donde se hace click. Cambia el fondo del LI
   ev.currentTarget.classList.toggle("favourite");
 
   console.log(ev.currentTarget.dataset.id);
 
+  // recupero el id del LI clickado
   const clickedId = parseInt(ev.currentTarget.dataset.id); //parseInt para que devuelva un número
 
+  // busco obj con los datos del array, usando el id del LI donde se ha hecho clik
   const clickedSeries = seriesData.find(
     (eachObject) => eachObject.show.id === clickedId,
   );
 
+  // si encuentra datos, 
   if (clickedSeries !== undefined) {
-    console.log(clickedSeries);
-    const liHtml = renderOneSeries(clickedSeries);
+    favoritesData.push(clickedSeries);
+    localStorage.setItem('favs', JSON.stringify(favoritesData));
 
+    console.log(clickedSeries);
+    //generamos un li
+    const liHtml = renderOneSeries(clickedSeries);
+    //lo ponemos en la página (lista de favos)
     favouriteUl.innerHTML += liHtml;
   }
 }
@@ -29,6 +55,7 @@ function handleClickLi(ev) {
 function renderOneSeries(oneSeriesObj) {
   let image = "";
 
+  // condicional por si la serie no tiene img, si no da fallo
   if (oneSeriesObj.show.image) {
     image = oneSeriesObj.show.image.medium;
   } else {
