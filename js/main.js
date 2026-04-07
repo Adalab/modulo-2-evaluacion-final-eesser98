@@ -14,7 +14,6 @@ function handleClickSearch(ev) {
   fetch(`https://api.tvmaze.com/search/shows?q=${filterInput.value}`)
     .then((res) => res.json())
     .then((data) => {
-      console.log(data);
       seriesData = data.map((eachObj) => eachObj.show);
 
       renderAllSeries(seriesData);
@@ -80,8 +79,6 @@ function renderOneSeries(oneSeriesObj) {
   let image = oneSeriesObj.image
     ? oneSeriesObj.image.medium
     : "https://placehold.co/210x295/f5f5f5/666666/?text=TV";
-
-  console.log(oneSeriesObj);
 
   // Comprobar si es favorita para añadir la clase CSS
   const isFav = favouritesData.find((fav) => fav.id === oneSeriesObj.id);

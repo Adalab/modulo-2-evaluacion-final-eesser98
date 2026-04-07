@@ -28,7 +28,7 @@ h1 {
   display: flex;
 }
 
-/* Lista de favorritos izquierda */
+/* Lista de favoritos izquierda */
 .sidebar {
   width: 250px;
   min-height: 100vh;
@@ -60,13 +60,19 @@ h1 {
   flex-shrink: 0;
 }
 
-.favorites-list li {
+.favorites-list .series-card {
   display: flex;
   align-items: center;
   gap: 15px;
   padding: 10px;
   margin-bottom: 8px;
   background-color: #2e2e4d;
+}
+
+.favorites-list .series-card img {
+  width: 70px;
+  height: 70px;
+  object-fit: cover;
 }
 
 .results .series-card.favourite {
