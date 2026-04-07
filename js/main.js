@@ -12,33 +12,15 @@ let favouritesData = [];
 function handleClickSearch(ev) {
   ev.preventDefault();
   fetch(`https://api.tvmaze.com/search/shows?q=${filterInput.value}`)
-    .then((res) => res.json())
+    .then((res) => res.json()) // esto convierte la respuesta a JSON
     .then((data) => {
-      seriesData = data.map((eachObj) => eachObj.show);
+      seriesData = data.map((eachObj) => eachObj.show); // extrae solo "show"
 
       renderAllSeries(seriesData);
     });
 }
 
-searchBtn.addEventListener("click", handleClickSearch);
-
-/*
-function handleClickSearch (ev){
-  ev.preventDefault();
-  console.log("has hecho click");
-
-  // recueperar el value del input 
-  const typedValue = filterInput.value
-  console.log(typedValue);
-
-  //filtrar todos los resultados 
-  const filteredSeries = seriesData.filter (eachObj => 
-    eachObj.name.toLowerCase().includes(typedValue.toLowerCase()));
-
-  //pintar los resultados 
-  renderAllSeries(filteredSeries);
-  }
- */
+searchBtn.addEventListener("click", handleClickSearch); // evento que conecta el botón con la función de búsqueda (handleClickSearh)
 
 function addEventsToSeries() {
   const allSeriesLi = document.querySelectorAll(".js_series"); // Seleccionamos todos los LI
@@ -48,7 +30,7 @@ function addEventsToSeries() {
 }
 
 function handleClickLi(ev) {
-  const clickedId = parseInt(ev.currentTarget.dataset.id);
+  const clickedId = parseInt(ev.currentTarget.dataset.id); // parseInt para que devuelva números
 
   // Buscamos la serie en el array original
   const clickedSeries = seriesData.find(
@@ -110,7 +92,7 @@ function renderAllFavourites() {
 }
 
 function retrieveData() {
-  const seriesFromLS = JSON.parse(localStorage.getItem("cache"));
+  const seriesFromLS = JSON.parse(localStorage.getItem("cache")); // parse para que devuelva texto (string)
 
   if (seriesFromLS) {
     seriesData = seriesFromLS;
@@ -134,5 +116,5 @@ function retrieveFavs() {
   }
 }
 
-retrieveFavs();
-retrieveData();
+retrieveFavs(); // llamada a la función
+retrieveData(); // llamada a la función
