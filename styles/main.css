@@ -39,13 +39,13 @@ h1 {
 }
 
 .sidebar h2 {
-  margin-top: 0;  
+  margin-top: 0;
   margin-bottom: 15px;
 }
 .sidebar .favorites-list li {
   display: flex;
   align-items: center;
-  gap: 15px; 
+  gap: 15px;
 }
 
 .favorites-list {
@@ -54,10 +54,10 @@ h1 {
 }
 
 .favorite-img {
-  width: 70px;     
-  height: 70px;       
-  object-fit: cover; 
-  flex-shrink: 0; 
+  width: 70px;
+  height: 70px;
+  object-fit: cover;
+  flex-shrink: 0;
 }
 
 .favorites-list li {
@@ -69,15 +69,15 @@ h1 {
   background-color: #2e2e4d;
 }
 
-.favourite {
-  background-color: #ffcc00; /* O el color que quieras */
+.results .series-card.favourite {
+  background-color: #e1cbff;
 }
 
 /* Lista de resultados */
 
 .layout {
   display: flex;
-  align-items: flex-start; 
+  align-items: flex-start;
   gap: 20px;
 }
 

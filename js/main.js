@@ -4,25 +4,24 @@ const resultsUl = document.querySelector(".js_results");
 const favouriteUl = document.querySelector(".js_favouriteUl");
 
 const searchBtn = document.querySelector(".js_searchBtn");
-const filterInput = document.querySelector (".js_filterInput");
+const filterInput = document.querySelector(".js_filterInput");
 
 let seriesData = [];
 let favouritesData = [];
 
-function handleClickSearch (ev){
+function handleClickSearch(ev) {
   ev.preventDefault();
-  fetch (`https://api.tvmaze.com/search/shows?q=${filterInput.value}`)
-  .then(res => res.json())
-  .then (data => {
-    console.log(data);
-    const filteredSeries = data.show;
+  fetch(`https://api.tvmaze.com/search/shows?q=${filterInput.value}`)
+    .then((res) => res.json())
+    .then((data) => {
+      console.log(data);
+      seriesData = data.map((eachObj) => eachObj.show);
 
-    renderAllSeries (filteredSeries);
-
-  })
+      renderAllSeries(seriesData);
+    });
 }
 
- searchBtn.addEventListener("click", handleClickSearch);
+searchBtn.addEventListener("click", handleClickSearch);
 
 /*
 function handleClickSearch (ev){
@@ -54,12 +53,12 @@ function handleClickLi(ev) {
 
   // Buscamos la serie en el array original
   const clickedSeries = seriesData.find(
-    (eachObject) => eachObject.id === clickedId
+    (eachObject) => eachObject.id === clickedId,
   );
 
   // Buscamos si ya está en favoritos
   const favsIndex = favouritesData.findIndex(
-    (eachObj) => eachObj.id === clickedId
+    (eachObj) => eachObj.id === clickedId,
   );
 
   if (favsIndex !== -1) {
@@ -71,19 +70,21 @@ function handleClickLi(ev) {
   }
 
   // Guardamos en LS y RE-PINTAMOS TODO
-  localStorage.setItem('favs', JSON.stringify(favouritesData));
-  
+  localStorage.setItem("favs", JSON.stringify(favouritesData));
+
   renderAllSeries(seriesData); // Esto hace que cambie el color en la lista principal
-  renderAllFavourites();       // Esto actualiza la lista de la derecha
+  renderAllFavourites(); // Esto actualiza la lista de la derecha
 }
 
 function renderOneSeries(oneSeriesObj) {
-  let image = oneSeriesObj.image 
-    ? oneSeriesObj.image.medium 
+  let image = oneSeriesObj.image
+    ? oneSeriesObj.image.medium
     : "https://placehold.co/210x295/f5f5f5/666666/?text=TV";
 
+  console.log(oneSeriesObj);
+
   // Comprobar si es favorita para añadir la clase CSS
-  const isFav = favouritesData.find(fav => fav.id === oneSeriesObj.id);
+  const isFav = favouritesData.find((fav) => fav.id === oneSeriesObj.id);
   const favClass = isFav ? "favourite" : "";
 
   return `
@@ -99,7 +100,7 @@ function renderAllSeries(data) {
     html += renderOneSeries(oneSeriesObj);
   }
   resultsUl.innerHTML = html;
-  
+
   addEventsToSeries();
 }
 
@@ -115,13 +116,13 @@ function retrieveData() {
   const seriesFromLS = JSON.parse(localStorage.getItem("cache"));
 
   if (seriesFromLS) {
-    seriesData = seriesFromLS; 
+    seriesData = seriesFromLS;
     renderAllSeries(seriesData);
   } else {
     fetch("https://api.tvmaze.com/shows")
       .then((res) => res.json())
       .then((data) => {
-        seriesData = data; 
+        seriesData = data;
         localStorage.setItem("cache", JSON.stringify(seriesData));
         renderAllSeries(seriesData);
       });
